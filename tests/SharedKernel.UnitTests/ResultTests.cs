@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using Newtonsoft.Json.Linq;
 
 namespace SharedKernel.UnitTests;
 
@@ -15,8 +14,7 @@ public class ResultTests
         var result = Result.Success(value);
 
         // Assert
-        result.Errors.Should().BeNull();
-        result.Status.Should().Be(ResultStatus.Ok);
+        result.Error.Should().BeNull();
         result.IsSuccess.Should().BeTrue();
         result.IsFailure.Should().BeFalse();
         result.Value.Should().Be(value);
@@ -31,8 +29,7 @@ public class ResultTests
         var result = Result<bool?>.Success(null);
 
         // Assert
-        result.Errors.Should().BeNull();
-        result.Status.Should().Be(ResultStatus.Ok);
+        result.Error.Should().BeNull();
         result.IsSuccess.Should().BeTrue();
         result.IsFailure.Should().BeFalse();
         result.Value.Should().BeNull();
@@ -47,7 +44,7 @@ public class ResultTests
         var result = Result<bool?>.Failure(ErrorEnum.NotFound);
 
         // Assert
-        result.Errors.Should().ContainSingle().Which.Should().Be(ErrorEnum.NotFound);
+        result.Error.Should().Be(ErrorEnum.NotFound);
         result.IsSuccess.Should().BeFalse();
         result.IsFailure.Should().BeTrue();
         result.Value.Should().BeNull();
@@ -107,8 +104,7 @@ public class ResultTests
         var result = Result.Success();
 
         // Assert
-        result.Errors.Should().BeNull();
-        result.Status.Should().Be(ResultStatus.Ok);
+        result.Error.Should().BeNull();
         result.IsSuccess.Should().BeTrue();
         result.IsFailure.Should().BeFalse();
     }
@@ -122,8 +118,7 @@ public class ResultTests
         var result = Result.Failure(ErrorEnum.NotFound);
 
         // Assert
-        result.Status.Should().Be(ResultStatus.NotFound);
-        result.Errors.Should().ContainSingle().Which.Should().Be(ErrorEnum.NotFound);
+        result.Error.Should().Be(ErrorEnum.NotFound);
         result.IsSuccess.Should().BeFalse();
         result.IsFailure.Should().BeTrue();
     }

@@ -1,10 +1,9 @@
 ﻿namespace SharedKernel;
 
-public class Result<T>
+public class Result<T> : IResult
 {
     public T Value { get; private init; } = default!;
-    public IEnumerable<ErrorEnum>? Errors { get; protected init; }
-    public ResultStatus Status => Errors?.First().Status ?? ResultStatus.Ok;
+    public ErrorEnum? Error { get; protected init; }
     public bool IsSuccess { get; }
     public bool IsFailure => !IsSuccess;
 
@@ -20,11 +19,11 @@ public class Result<T>
         };
     }
 
-    public static Result<T> Failure(params ErrorEnum[] errors)
+    public static Result<T> Failure(ErrorEnum error)
     {
         return new Result<T>(false)
         {
-            Errors = errors
+            Error = error
         };
     }
 
@@ -34,7 +33,7 @@ public class Result<T>
     {
         return new Result<T>(default(T))
         {
-            Errors = result.Errors,
+            Error = result.Error,
         };
     }
 }
