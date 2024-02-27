@@ -5,5 +5,8 @@ public abstract class EntityBase(int id) : EntityBase<int>(id);
 public abstract class EntityBase<TId>(TId id) : HasDomainEventsBase
     where TId : struct, IEquatable<TId>
 {
+    // TODO: Consider using strongly-typed IDs: https://github.com/andrewlock/StronglyTypedId
     public TId Id { get; set; } = id;
+    // TODO: Add time for Audit logging
+    // public DateTime UpdatedTime { get; set; } = DateTime.UtcNow;
 }
