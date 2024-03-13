@@ -1,5 +1,6 @@
 ﻿namespace SharedKernel;
 
+// TODO: Add error methods: NotFound()
 public class Result<T> : IResult
 {
     public T Value { get; private init; } = default!;
@@ -27,7 +28,7 @@ public class Result<T> : IResult
         };
     }
 
-    public static implicit operator T(Result<T> result) => result.Value;
+    public static explicit operator T(Result<T> result) => result.Value;
     public static implicit operator Result<T>(T value) => new(value);
     public static implicit operator Result<T>(Result result)
     {
@@ -36,11 +37,30 @@ public class Result<T> : IResult
             Error = result.Error,
         };
     }
+    public static implicit operator Result(Result<T> result)
+    {
+        return new Result(result.IsSuccess)
+        {
+            Error = result.Error,
+        };
+    }
+
+    // TODO Consider refactoring
+    public static Result<T> FromFailure<T2>(Result<T2> result)
+    {
+        if (result.IsSuccess) throw new ArgumentException("Result must be Failure.", nameof(result));
+        return new Result<T>(false)
+        {
+            Error = result.Error
+        };
+    }
+
+    public static Result<T> NotFound(string objectName) => Failure(ErrorEnum.NotFound(objectName));
 }
 
 public class Result : Result<Result>
 {
-    protected Result(bool isSuccess) : base(isSuccess)
+    protected internal Result(bool isSuccess) : base(isSuccess)
     {
     }
 

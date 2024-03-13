@@ -7,6 +7,7 @@ public abstract class EntityBase<TId>(TId id) : HasDomainEventsBase
 {
     // TODO: Consider using strongly-typed IDs: https://github.com/andrewlock/StronglyTypedId
     public TId Id { get; set; } = id;
-    // TODO: Add time for Audit logging
-    // public DateTime UpdatedTime { get; set; } = DateTime.UtcNow;
+    // TODO: Reconsider time for Audit logging
+    public DateTime? UpdatedUtc { get; set; }
+    public DateTime CreatedUtc { get; set; } = DateTime.UtcNow;
 }

@@ -6,8 +6,7 @@ public abstract class HasDomainEventsBase
 {
     private readonly List<DomainEventBase> _domainEvents = [];
     [NotMapped]
-    public IEnumerable<DomainEventBase> DomainEvents => _domainEvents.AsReadOnly();
-
+    public IEnumerable<DomainEventBase> DomainEvents => [.. _domainEvents];
     protected void RegisterDomainEvent(DomainEventBase domainEvent) => _domainEvents.Add(domainEvent);
-    protected void ClearDomainEvents() => _domainEvents.Clear();
+    public void ClearDomainEvents() => _domainEvents.Clear();
 }

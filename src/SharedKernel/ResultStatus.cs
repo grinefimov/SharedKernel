@@ -1,5 +1,6 @@
 ﻿namespace SharedKernel;
 
+// TODO: Remove
 public enum ResultStatus
 {
     Ok,

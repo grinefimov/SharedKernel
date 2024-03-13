@@ -6,11 +6,14 @@ namespace SharedKernel;
 // TODO: Should it be SmartEnum?
 public class ErrorEnum : SmartEnum<ErrorEnum>
 {
-    public static readonly ErrorEnum NotFound = new(nameof(NotFound), 1, "Object was not found.",
+    public static ErrorEnum NotFound(string objectName) => new(nameof(NotFound), 1, $"{objectName} was not found.",
         (int)HttpStatusCode.NotFound);
 
+    public static ErrorEnum BadRequest(string message) => new(nameof(BadRequest), 2, message,
+        (int)HttpStatusCode.BadRequest);
+
     public static readonly ErrorEnum Unauthorized =
-        new(nameof(Unauthorized), 2, "User is not authorized.", (int)HttpStatusCode.Unauthorized);
+        new(nameof(Unauthorized), 3, "User is not authorized.", (int)HttpStatusCode.Unauthorized);
 
     public int StatusCode { get; private init; }
     public string Message { get; private init; }
