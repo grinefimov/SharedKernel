@@ -1,4 +1,4 @@
-﻿namespace SharedKernel;
+﻿namespace SharedKernel.UseCases;
 
 // TODO: Consider removing IResult (replace with Result)
 public interface IResult

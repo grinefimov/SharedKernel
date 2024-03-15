@@ -1,4 +1,4 @@
-﻿namespace SharedKernel;
+﻿namespace SharedKernel.Core;
 
 public abstract class EntityBase(int id) : EntityBase<int>(id);
 

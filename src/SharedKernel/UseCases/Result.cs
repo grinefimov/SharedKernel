@@ -1,9 +1,9 @@
-﻿namespace SharedKernel;
+﻿namespace SharedKernel.UseCases;
 
 // TODO: Add error methods: NotFound()
-public class Result<T> : IResult
+public record Result<T> : IResult
 {
-    public T Value { get; private init; } = default!;
+    public T Value { get; protected init; } = default!;
     public ErrorEnum? Error { get; protected init; }
     public bool IsSuccess { get; }
     public bool IsFailure => !IsSuccess;
@@ -58,7 +58,7 @@ public class Result<T> : IResult
     public static Result<T> NotFound(string objectName) => Failure(ErrorEnum.NotFound(objectName));
 }
 
-public class Result : Result<Result>
+public record Result : Result<Result>
 {
     protected internal Result(bool isSuccess) : base(isSuccess)
     {

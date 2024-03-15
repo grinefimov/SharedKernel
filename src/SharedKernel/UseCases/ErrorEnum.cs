@@ -1,10 +1,10 @@
 ﻿using System.Net;
 using Ardalis.SmartEnum;
 
-namespace SharedKernel;
+namespace SharedKernel.UseCases;
 
 // TODO: Should it be SmartEnum?
-public class ErrorEnum : SmartEnum<ErrorEnum>
+public sealed class ErrorEnum : SmartEnum<ErrorEnum>
 {
     public static ErrorEnum NotFound(string objectName) => new(nameof(NotFound), 1, $"{objectName} was not found.",
         (int)HttpStatusCode.NotFound);
