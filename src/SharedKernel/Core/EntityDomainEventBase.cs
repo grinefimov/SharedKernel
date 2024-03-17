@@ -1,19 +1,26 @@
 ﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace SharedKernel.Core;
 
-public abstract class EntityDomainEventBase<T>(T entity) : DomainEventBase(JsonSerializer.Serialize(entity))
+// TODO: Consider moving to Infrastructure
+public abstract class EntityDomainEventBase<T>(DateTime occurredUtc, T entity) : DomainEventBase(occurredUtc)
 {
-    private T? _entity = entity;
+    private string _data = JsonSerializer.Serialize(entity);
+    protected T? Entity = entity;
 
-    protected T? Entity
+    public override string Data
     {
-        get
-        {
-            if (_entity is not null) return _entity;
-            _entity = JsonSerializer.Deserialize<T>(Data);
-            return _entity;
-        }
-        init => _entity = value;
+        get => Entity is null
+            ? _data
+            : JsonSerializer.Serialize(Entity,
+                new JsonSerializerOptions { ReferenceHandler = ReferenceHandler.Preserve });
+        set => _data = value;
+    }
+
+    protected T? GetEntity()
+    {
+        if (Entity is not null) return Entity;
+        return Entity = JsonSerializer.Deserialize<T>(Data);
     }
 }
