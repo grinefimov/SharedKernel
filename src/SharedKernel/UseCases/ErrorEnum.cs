@@ -13,7 +13,7 @@ public sealed class ErrorEnum : SmartEnum<ErrorEnum>
         (int)HttpStatusCode.BadRequest);
 
     public static readonly ErrorEnum Unauthorized =
-        new(nameof(Unauthorized), 3, "User is not authorized.", (int)HttpStatusCode.Unauthorized);
+        new(nameof(Unauthorized), 3, "Unauthorized.", (int)HttpStatusCode.Unauthorized);
 
     public int StatusCode { get; private init; }
     public string Message { get; private init; }
