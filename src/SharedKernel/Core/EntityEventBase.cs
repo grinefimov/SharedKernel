@@ -5,8 +5,8 @@ using Ardalis.GuardClauses;
 namespace SharedKernel.Core;
 
 // TODO: Consider moving to Infrastructure
-public abstract class EntityDomainEventBase<T, TId>(DateTime occurredUtc, T? entity)
-    : DomainEventBase(occurredUtc) where T : EntityBase<TId> where TId : struct, IEquatable<TId>
+public abstract class EntityEventBase<T, TId>(DateTime occurredUtc, T? entity)
+    : EventBase(occurredUtc) where T : EntityBase<TId> where TId : struct, IEquatable<TId>
 {
     private string? _data = entity is null ? null : JsonSerializer.Serialize(entity);
 

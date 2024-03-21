@@ -2,7 +2,8 @@
 
 public abstract class EntityBase(int? id) : EntityBase<int>(id);
 
-public abstract class EntityBase<TId>(TId? id) : HasDomainEventsBase
+// TODO: Consider https://github.com/jasontaylordev/CleanArchitecture/blob/main/src/Domain/Common/BaseAuditableEntity.cs
+public abstract class EntityBase<TId>(TId? id) : HasEventsBase
     where TId : struct, IEquatable<TId>
 {
     // TODO: Consider using strongly-typed IDs: https://github.com/andrewlock/StronglyTypedId

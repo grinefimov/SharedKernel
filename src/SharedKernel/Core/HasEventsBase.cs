@@ -3,13 +3,13 @@ using System.Text.Json.Serialization;
 
 namespace SharedKernel.Core;
 
-public abstract class HasDomainEventsBase
+public abstract class HasEventsBase
 {
-    private readonly List<DomainEventBase> _domainEvents = [];
+    private readonly List<EventBase> _domainEvents = [];
     [JsonIgnore]
     [NotMapped]
-    public IEnumerable<DomainEventBase> DomainEvents => [.. _domainEvents];
-    protected void RegisterDomainEvent(DomainEventBase domainEvent)
+    public IEnumerable<EventBase> DomainEvents => [.. _domainEvents];
+    protected void RegisterDomainEvent(EventBase domainEvent)
     {
         domainEvent.OccurredUtc = DateTime.UtcNow;
         _domainEvents.Add(domainEvent);
