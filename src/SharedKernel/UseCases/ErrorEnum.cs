@@ -1,28 +1,67 @@
 ﻿using System.Net;
+using System.Text.Json;
 using Ardalis.SmartEnum;
+using FluentValidation.Results;
 
 namespace SharedKernel.UseCases;
 
 // TODO: Should it be SmartEnum?
-public sealed class ErrorEnum : SmartEnum<ErrorEnum>
+// TODO: Rework for ProblemDetails
+// TODO: How to compare the enum values?
+//      (result.Error.Name == nameof(ErrorEnum.ValidationError))
+//      (result.Error.Equals(ErrorEnum.ValidationError))
+//      (result.Error.When(ErrorEnum.ValidationError).Then(() => ...).When ... ).Default(...);
+public class ErrorEnum : SmartEnum<ErrorEnum>
 {
-    public static ErrorEnum NotFound(string objectName) => new(nameof(NotFound), 1, $"{objectName} was not found.",
-        (int)HttpStatusCode.NotFound);
-
-    public static ErrorEnum BadRequest(string message) => new(nameof(BadRequest), 2, message,
-        (int)HttpStatusCode.BadRequest);
-
-    public static readonly ErrorEnum Unauthorized =
-        new(nameof(Unauthorized), 3, "Unauthorized.", (int)HttpStatusCode.Unauthorized);
-
-    public int StatusCode { get; private init; }
-    public string Message { get; private init; }
+    public virtual string Message { get; private init; }
+    public int StatusCode => Value;
     // TODO: Is StackTrace needed?
     //public StackTrace StackTrace { get; } = new(2);
 
-    private ErrorEnum(string name, int value, string message, int statusCode) : base(name, value)
+    private ErrorEnum(string name, int value, string message) : base(name, value)
     {
         Message = message;
-        StatusCode = statusCode;
+    }
+
+    // TODO: Remove? Merge with ValidationErrors?
+    // public static ErrorEnum BadRequest(string message) => new(nameof(BadRequest), 400, message,
+    //     (int)HttpStatusCode.BadRequest);
+
+    public static ErrorEnum ValidationError(List<ValidationFailure> failures) =>
+        new ValidationErrors(nameof(ValidationErrors), (int)HttpStatusCode.BadRequest,
+            "Validation failures have occurred.", failures);
+
+    public static readonly ErrorEnum Unauthorized =
+        new(nameof(Unauthorized), (int)HttpStatusCode.Unauthorized, "Unauthorized.");
+
+    public static ErrorEnum NotFound(string objectName) =>
+        new(nameof(NotFound), (int)HttpStatusCode.NotFound, $"{objectName} was not found.");
+
+    private sealed class ValidationErrors : ErrorEnum
+    {
+        private List<ValidationFailure> Failures { get; }
+        private readonly string _message;
+        public override string Message
+        {
+            // TODO: Move this logic to App
+            get
+            {
+                var failures = Failures
+                    .GroupBy(e => e.PropertyName, e => e.ErrorMessage.Replace("\'", ""))
+                    .ToDictionary(failureGroup => failureGroup.Key, failureGroup => failureGroup.ToArray());
+                return JsonSerializer.Serialize(new
+                {
+                    Message = _message,
+                    Failures = failures
+                });
+            }
+        }
+
+        internal ValidationErrors(string name, int value, string message, List<ValidationFailure> failures) : base(name,
+            value, message)
+        {
+            _message = message;
+            Failures = failures;
+        }
     }
 }
